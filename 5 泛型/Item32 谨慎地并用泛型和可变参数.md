@@ -27,7 +27,7 @@ static void dangerous(List<String>... stringLists) {
 	List<Integer> intList = List.of(42);
 	Object[] objects = stringLists;
 	objects[0] = intList; // Heap pollution 
-  String s = stringLists[0].get(0); // ClassCastException
+    String s = stringLists[0].get(0); // ClassCastException
 }
 ```
 
@@ -57,8 +57,8 @@ static void dangerous(List<String>... stringLists) {
 
 ```java
 // UNSAFE - Exposes a reference to its generic parameter array!
-   static <T> T[] toArray(T... args) {
-       return args;
+static <T> T[] toArray(T... args) {
+    return args;
 }
 ```
 
@@ -72,13 +72,13 @@ static void dangerous(List<String>... stringLists) {
 
 ```java
 static <T> T[] pickTwo(T a, T b, T c) {
-       switch(ThreadLocalRandom.current().nextInt(3)) {
-         case 0: return toArray(a, b);
-         case 1: return toArray(a, c);
-         case 2: return toArray(b, c);
-			}
-       throw new AssertionError(); // Can't get here
-   }
+    switch(ThreadLocalRandom.current().nextInt(3)) {
+        case 0: return toArray(a, b);
+        case 1: return toArray(a, c);
+        case 2: return toArray(b, c);
+    }
+    throw new AssertionError(); // Can't get here
+}
 ```
 
 > This method is not, in and of itself, dangerous and would not generate a warning except that it invokes the toArray method, which has a generic varargs parameter.
@@ -95,7 +95,7 @@ static <T> T[] pickTwo(T a, T b, T c) {
 
 ```java
 public static void main(String[] args) {
-       String[] attributes = pickTwo("Good", "Fast", "Cheap");
+    String[] attributes = pickTwo("Good", "Fast", "Cheap");
 }
 ```
 
@@ -113,13 +113,13 @@ public static void main(String[] args) {
 
 ```java
 // Safe method with a generic varargs parameter
-   @SafeVarargs
-   static <T> List<T> flatten(List<? extends T>... lists) {
-       List<T> result = new ArrayList<>();
-       for (List<? extends T> list : lists)
-           result.addAll(list);
-       return result;
-   }
+@SafeVarargs
+static <T> List<T> flatten(List<? extends T>... lists) {
+    List<T> result = new ArrayList<>();
+    for (List<? extends T> list : lists)
+        result.addAll(list);
+    return result;
+}
 ```
 
 > The rule for deciding when to use the SafeVarargs annotation is simple: **Use** **@SafeVarargs** **on every method with a varargs parameter of a generic or parameterized type,** so its users won’t be burdened by needless and confusing compiler warnings. This implies that you should *never* write unsafe varargs methods like dangerous or toArray. Every time the compiler warns you of possible heap pollution from a generic varargs parameter in a method you control, check that the method is safe. As a reminder, a generic varargs methods is safe if:
@@ -148,10 +148,10 @@ SafeVarargs注解的一个可选的替代方案，是根据Item28的建议，使
 ```java
 // List as a typesafe alternative to a generic varargs parameter 
 static <T> List<T> flatten(List<List<? extends T>> lists) {
-       List<T> result = new ArrayList<>();
-       for (List<? extends T> list : lists)
-           result.addAll(list);
-       return result;
+    List<T> result = new ArrayList<>();
+    for (List<? extends T> list : lists)
+        result.addAll(list);
+    return result;
 }
 ```
 
@@ -173,13 +173,13 @@ audience = flatten(List.of(friends, romans, countrymen));
 
 ```java
 static <T> List<T> pickTwo(T a, T b, T c) { 
-  	switch(rnd.nextInt(3)) {
-			case 0: return List.of(a, b); 
-      case 1: return List.of(a, c); 
-      case 2: return List.of(b, c);
-		}
-       throw new AssertionError();
-   }
+    switch(rnd.nextInt(3)) {
+        case 0: return List.of(a, b); 
+        case 1: return List.of(a, c); 
+        case 2: return List.of(b, c);
+    }
+    throw new AssertionError();
+}
 ```
 
 > and the main method becomes this:
@@ -188,7 +188,7 @@ static <T> List<T> pickTwo(T a, T b, T c) {
 
 ```java
 public static void main(String[] args) {
-		List<String> attributes = pickTwo("Good", "Fast", "Cheap");
+    List<String> attributes = pickTwo("Good", "Fast", "Cheap");
 }
 ```
 
