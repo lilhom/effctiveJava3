@@ -1,8 +1,8 @@
 ### Item31 使用有限制的通配符来提升API的灵活性
 
-> As noted in Item 28, parameterized types are *invariant*. In other words, for any two distinct types Type1 and Type2, List<Type1> is neither a subtype nor a supertype of List<Type2>. Although it is counterintuitive that List<String> is not a subtype of List<Object>, it really does make sense. You can put any object into a List<Object>, but you can put only strings into a List<String>. Since a List<String> can’t do everything a List<Object> can, it isn’t a subtype (by the Liskov substitution principal, Item 10).
+> As noted in Item 28, parameterized types are *invariant*. In other words, for any two distinct types Type1 and Type2, `List<Type1>` is neither a subtype nor a supertype of `List<Type2>`. Although it is counterintuitive that `List<String>` is not a subtype of `List<Object>`, it really does make sense. You can put any object into a `List<Object>`, but you can put only strings into a `List<String>`. Since a `List<String>` can’t do everything a `List<Object>` can, it isn’t a subtype (by the Liskov substitution principal, Item 10).
 
-正如Item28里所讲的那样，参数化类型是非协变的。也就是说，对于任何两个不同的类型Type1和Type2。List<Type1>永远都不是List<Type2>的子类型或者父类型。虽然List<String>不是List<Object>的子类型是违反直觉的，但确实是有意义的。你可以往List<Object>里放所有的对象，但是只能往 List<String>里面放String对象。由于List<Stirng>不能做所有List<Object>可以做的事情，所有List<String>就不是List<Object>的子类型（里氏替换原则，Item10)。
+正如Item28里所讲的那样，参数化类型是非协变的。也就是说，对于任何两个不同的类型Type1和Type2。`List<Type1>`永远都不是`List<Type2>`的子类型或者父类型。虽然`List<String>`不是`List<Object>`的子类型是违反直觉的，但确实是有意义的。你可以往`List<Object>`里放所有的对象，但是只能往 `List<String>`里面放String对象。由于`List<Stirng>`不能做所有`List<Object>`可以做的事情，所有`List<String>`就不是`List<Object>`的子类型（里氏替换原则，Item10）。
 
 > Sometimes you need more flexibility than invariant typing can provide. Consider the Stack class from Item 29. To refresh your memory, here is its public API:
 
@@ -29,9 +29,9 @@ public class Stack<E> {
    }
 ```
 
-> This method compiles cleanly, but it isn’t entirely satisfactory. If the element type of the Iterable src exactly matches that of the stack, it works fine. But suppose you have a Stack<Number> and you invoke push(intVal), where intVal is of type Integer. This works because Integer is a subtype of Number. So logically, it seems that this should work, too:
+> This method compiles cleanly, but it isn’t entirely satisfactory. If the element type of the Iterable src exactly matches that of the stack, it works fine. But suppose you have a `Stack<Number>` and you invoke push(intVal), where intVal is of type Integer. This works because Integer is a subtype of Number. So logically, it seems that this should work, too:
 
-这个方法可以干干净净地编译，但是还不是完全让人满意的。只有当Iterator实例src的元素类型恰好和stack的元素类型一致的时候，才能正常工作。但是，假设你现在有一个Stack<Number> ，并且你调用了push(intVal)方法，而intVal的类型是Integer。这个方法可以正常工作，因为Integer是Number的子类型。所以逻辑上来说，下面这段代码也应该可以工作。
+这个方法可以干干净净地编译，但是还不是完全让人满意的。只有当`Iterable`实例`src`的元素类型恰好和stack的元素类型一致的时候，才能正常工作。但是，假设你现在有一个`Stack<Number>` ，并且你调用了`push(intVal)`方法，而`intVal`的类型是`Integer`。这个方法可以正常工作，因为`Integer`是`Number`的子类型。所以逻辑上来说，下面这段代码也应该可以工作。
 
 ```java
 Stack<Number> numberStack = new Stack<>();
@@ -78,9 +78,9 @@ public void pushAll(Iterable<? extends E> src) {
 }
 ```
 
-> Again, this compiles cleanly and works fine if the element type of the destination collection exactly matches that of the stack. But again, it isn’t entirely satisfactory. Suppose you have a Stack<Number> and variable of type Object. If you pop an element from the stack and store it in the variable, it compiles and runs without error. So shouldn’t you be able to do this, too?
+> Again, this compiles cleanly and works fine if the element type of the destination collection exactly matches that of the stack. But again, it isn’t entirely satisfactory. Suppose you have a `Stack<Number>` and variable of type Object. If you pop an element from the stack and store it in the variable, it compiles and runs without error. So shouldn’t you be able to do this, too?
 
-同样地，这个代码也能干净地编译，当目标集合的元素类型和stack的一致的时候，也能正常工作。但是同样地，这并不能让人满意。假如你有一个Stack<Number>和一个类型为Object的变量。当你把一个元素从stack中弹出来并存储到这变量中时，可以正常编译运行，不会有error。那么，你为什么不能像下面这么做呢？
+同样地，这个代码也能干净地编译，当目标集合的元素类型和stack的一致的时候，也能正常工作。但是同样地，这并不能让人满意。假如你有一个`Stack<Number>`和一个类型为`Object`的变量。当你把一个元素从stack中弹出来并存储到这变量中时，可以正常编译运行，不会有error。那么，你为什么不能像下面这么做呢？
 
 ```java
 Stack<Number> numberStack = new Stack<Number>();
@@ -88,9 +88,9 @@ Collection<Object> objects = ... ;
 numberStack.popAll(objects);
 ```
 
-> If you try to compile this client code against the version of popAll shown earlier, you’ll get an error very similar to the one that we got with our first version of pushAll: Collection<Object> is not a subtype of Collection<Number>. Once again, wildcard types provide a way out. The type of the input parameter to popAll should not be “collection of E” but “collection of some supertype of E” (where supertype is defined such that E is a supertype of itself [JLS, 4.10]). Again, there is a wildcard type that means precisely that: Collection<? super E>. Let’s modify popAll to use it:
+> If you try to compile this client code against the version of popAll shown earlier, you’ll get an error very similar to the one that we got with our first version of pushAll: `Collection<Object>` is not a subtype of `Collection<Number>`. Once again, wildcard types provide a way out. The type of the input parameter to popAll should not be “collection of E” but “collection of some supertype of E” (where supertype is defined such that E is a supertype of itself [JLS, 4.10]). Again, there is a wildcard type that means precisely that: `Collection<? super E>`. Let’s modify popAll to use it:
 
-当你企图基于前面的popAll版本来编译这个客户端代码的时候，你将会得到一个error，和前面写的第一版的pushAll方法差不多：Collection<Object> 不是Collection<Number>的子类型。还是同样地，通配符类型也提供了一个方法。popAll方法的输入参数类型不应该是“E的集合”应该是“E的一些超类型的集合”（这里的超类型定义是正确的，因为E是它自己的超类。同样地，也有一个通配符类型能准确表达这个意思：Collection<? super E>。下面是使用它修改的popAll方法：
+当你企图基于前面的popAll版本来编译这个客户端代码的时候，你将会得到一个error，和前面写的第一版的pushAll方法差不多：`Collection<Object>` 不是`Collection<Number>`的子类型。还是同样地，通配符类型也提供了一个方法。popAll方法的输入参数类型不应该是“E的集合”应该是“E的一些超类型的集合”（这里的超类型定义是正确的，因为E是它自己的超类。同样地，也有一个通配符类型能准确表达这个意思：`Collection<? super E>`。下面是使用它修改的popAll方法：
 
 ```java
 // Wildcard type for parameter that serves as an E consumer 
